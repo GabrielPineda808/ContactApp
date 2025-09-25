@@ -26,5 +26,10 @@ public class ContactController {
         return ResponseEntity.ok().body(contactService.getAllContacts(page,size));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Contact> getContacts(@PathVariable(value="id") String id){
+        return ResponseEntity.ok().body(contactService.getContact(id));
+    }
+
 
 }
