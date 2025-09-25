@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static com.example.contact.constant.Constant.PHOTO_DIRECTORY;
+import static org.springframework.http.MediaType.*;
 
 @RestController
 @RequestMapping("/contacts")
@@ -23,7 +24,7 @@ public class ContactController {
 
     @PostMapping
     public ResponseEntity<Contact> createContact(@RequestBody Contact contact){
-        return ResponseEntity.created(URI.create("/contacts/<user_ID>")).body(contactService.createContact(contact));
+        return ResponseEntity.created(URI.create("/contacts/id")).body(contactService.createContact(contact));
     }
 
     @GetMapping
@@ -42,7 +43,7 @@ public class ContactController {
         return ResponseEntity.ok().body(contactService.uploadPhoto(id,file));
     }
 
-    @GetMapping("/image/{filename}")
+    @GetMapping(value = "/image/{filename}", produces = {IMAGE_PNG_VALUE,IMAGE_JPEG_VALUE, IMAGE_GIF_VALUE})
     public byte[] getPhoto(@PathVariable("filename") String filename) throws IOException {
         return Files.readAllBytes(Paths.get(PHOTO_DIRECTORY + filename));
     }
