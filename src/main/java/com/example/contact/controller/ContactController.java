@@ -37,5 +37,12 @@ public class ContactController {
         return ResponseEntity.ok().body(contactService.uploadPhoto(id,file));
     }
 
+    @DeleteMapping
+    public ResponseEntity<Void> deleteContact(@RequestBody Contact contact) {
+        contactService.deleteContact(contact);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 }
