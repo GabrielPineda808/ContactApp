@@ -19,6 +19,7 @@ import static org.springframework.http.MediaType.*;
 @RestController
 @RequestMapping("/contacts")
 @RequiredArgsConstructor
+@CrossOrigin
 public class ContactController {
     private final ContactService contactService;
 
