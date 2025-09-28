@@ -588,6 +588,37 @@ input[type=file]::file-selector-button:hover {
 	padding: 7px 15px;
 }
 
+/* Delete Modal Overlay */
+.delete-modal-overlay {
+    background: rgba(0,0,0,0.6); /* slightly darker */
+    z-index: 1100; /* higher if other modals exist */
+}
+
+/* Delete Modal Box */
+.delete-modal {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+/* Delete Modal Actions */
+.delete-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+#deleteModal.modal {
+  padding: 1rem;
+  border-radius: 8px;
+  max-width: 400px;
+}
+
+
 @media(max-width: 584px) {
 
 	/* .container{

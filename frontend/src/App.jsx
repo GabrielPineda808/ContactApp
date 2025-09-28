@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import 'react-toastify/dist/ReactToastify.css';
 import Header from './components/Header'
 import ContactList from './components/ContactList'
-import { getContacts, saveContact, updatePhoto } from './api/ContactService'
+import { getContacts, saveContact, updatePhoto, deleteContact } from './api/ContactService'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import ContactDetail from './components/ContactDetail'
 import { ToastContainer } from 'react-toastify'
@@ -81,6 +81,21 @@ function App() {
     }
   }
 
+  const deleteContactFromList = async (contactToDelete) => {
+    try {
+      await deleteContact(contactToDelete);
+      // Remove the contact from local state
+      setData(prev => ({
+        ...prev,
+        content: prev.content.filter(c => c.id !== contactToDelete.id),
+        totalElements: prev.totalElements - 1
+      }));
+    } catch (error) {
+      console.error('Error deleting contact:', error);
+    }
+  };
+
+
   const toggleModal = (show) => show ? modalRef.current.showModal() : modalRef.current.close(); // toggle modal natively with html of ref 
 
   useEffect(() => { getAllContacts();}, []); // runs once when componenet is reandered if there is no [] then it runs after every render and if there is an object inside the [] it wil run after first render and when that obj changes only
@@ -93,7 +108,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Navigate  to='/contacts'/>}></Route>
             <Route path='/contacts' element={<ContactList data={data} currentPage={currentPage} getAllContacts={getAllContacts} />}/>
-            <Route path='/contacts/:id' element={<ContactDetail updateContact={updateContact} updateImage={updateImage} />}/>
+            <Route path='/contacts/:id' element={<ContactDetail updateContact={updateContact} updateImage={updateImage} onDelete={deleteContactFromList} />}/>
           </Routes>
         </div>
       </main>

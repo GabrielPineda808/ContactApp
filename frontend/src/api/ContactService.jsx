@@ -22,6 +22,6 @@ export async function updatePhoto(formData) { //function to update contact by id
     return await axios.post(`${API_BASE_URL}/photo`, formData);    
 }
 
-export async function deleteContact(contact) { //function to delete contact by id
-    return await axios.delete(API_BASE_URL, contact);    
+export const deleteContact = async (contact) => { //function to delete contact by id
+    return await axios.delete(API_BASE_URL, {data: contact});    
 }

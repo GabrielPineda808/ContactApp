@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { getContact } from '../api/ContactService';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { getContact, deleteContact } from '../api/ContactService';
 import { toastError, toastSuccess } from '../api/ToastService';
 
-const ContactDetail = ({ updateContact, updateImage }) => {
+const ContactDetail = ({ updateContact, updateImage, onDelete }) => {
     const inputRef = useRef();
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [contact, setContact] = useState({
         id: '',
         name: '',
@@ -29,6 +30,7 @@ const ContactDetail = ({ updateContact, updateImage }) => {
             toastError(error.message);
         }
     };
+
 
     const selectImage = () => {
         inputRef.current.click();
@@ -62,6 +64,8 @@ const ContactDetail = ({ updateContact, updateImage }) => {
     useEffect(() => {
         fetchContact(id);
     }, []);
+
+    const navigate = useNavigate();
 
     return (
         <>
@@ -105,9 +109,13 @@ const ContactDetail = ({ updateContact, updateImage }) => {
                                     <input type="text" value={contact.status} onChange={onChange} name="status" required />
                                 </div>
                             </div>
-                            <div className="form_footer">
+                            <div className="form_footer" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <button type="button" className="btn btn-danger" onClick={() => setShowDeleteModal(true)}>
+                                    Delete
+                                </button>
                                 <button type="submit" className="btn">Save</button>
                             </div>
+                            
                         </form>
                     </div>
                 </div>
@@ -116,6 +124,27 @@ const ContactDetail = ({ updateContact, updateImage }) => {
             <form style={{ display: 'none' }}>
                 <input type='file' ref={inputRef} onChange={(event) => udpatePhoto(event.target.files[0])} name='file' accept='image/*' />
             </form>
+
+            {showDeleteModal && (
+                <dialog open className="modal" id="deleteModal">
+                    <div className="modal__header">
+                    <h3>Confirm Delete</h3>
+                    <i className="bi bi-x-lg" onClick={() => setShowDeleteModal(false)}></i>
+                    </div>
+                    <div className="divider"></div>
+                    <div className="modal__body">
+                    <p>Are you sure you want to delete {contact.name}?</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <button className="btn btn-danger" onClick={() => setShowDeleteModal(false)}>Cancel</button>
+                        <button className="btn btn-primary" onClick={async () => {
+                        await onDelete(contact);
+                        toastSuccess('Contact deleted');
+                        navigate('/contacts');
+                        }}>Yes, Delete</button>
+                    </div>
+                    </div>
+                </dialog>
+            )}
         </>
     )
 }
