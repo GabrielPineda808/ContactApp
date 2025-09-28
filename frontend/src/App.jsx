@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getContacts } from './services/contactsService'
+import { getContacts } from './api/ContactService'
 import './App.css'
 
 function App() {
