@@ -15,11 +15,11 @@ export async function getContact(id) { //function to get contact by id
 }
 
 export async function updateContact(contact) { //function to update contact by id
-    return await axios.put(API_BASE_URL, contact);    
+    return await axios.post(API_BASE_URL, contact);    
 }
 
 export async function updatePhoto(formData) { //function to update contact by id
-    return await axios.put(`${API_BASE_URL}/photo`, formData);    
+    return await axios.post(`${API_BASE_URL}/photo`, formData);    
 }
 
 export async function deleteContact(contact) { //function to delete contact by id
