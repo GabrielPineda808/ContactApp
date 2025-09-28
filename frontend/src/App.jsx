@@ -6,9 +6,18 @@ import './App.css'
 import { Routes, Route, Navigate } from 'react-router-dom'
 
 function App() {
-  const modalRef = useRef();
+  const modalRef = useRef(); // reference to the modal element in the DOM aka document.getElementById hold of native html element
   const [data, setData] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
+  const [file, setFile] = useState(undefined);
+  const [values, setValues] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    title: '',
+    status: '',
+  });
 
   const getAllContacts = async (page = 0, size = 10) => {
     try {
@@ -21,6 +30,10 @@ function App() {
     }
   }
 
+  const onChange = (e) => {
+    setValues({...values, [e.target.name]: e.target.value}) // spread operator to copy existing values and update the specific field
+  } // updates state on input change
+
   const toggleModal = (show) => show ? modalRef.current.showModal() : modalRef.current.close(); // toggle modal natively with html of ref 
 
   useEffect(() => { getAllContacts();}, []); // runs once when componenet is reandered if there is no [] then it runs after every render and if there is an object inside the [] it wil run after first render and when that obj changes only
@@ -31,7 +44,7 @@ function App() {
       <main className='main'>
         <div className='container'>
           <Routes>
-            <Route path='/' element={<Navigate  to='/contacts'/>}></Route>SS
+            <Route path='/' element={<Navigate  to='/contacts'/>}></Route>
             <Route path='/contacts' element={<ContactList data={data} currentPage={currentPage} getAllContacts={getAllContacts} />}/>
           </Routes>
         </div>
@@ -49,27 +62,27 @@ function App() {
             <div className="user-details">
               <div className="input-box">
                 <span className="details">Name</span>
-                <input type="text"  name='name' required />
+                <input type="text" value={values.name} onChange={onChange} name='name' required /> {/* onChange to update state on input change */}
               </div>
               <div className="input-box">
                 <span className="details">Email</span>
-                <input type="text"  name='email' required />
+                <input type="text" value={values.email} onChange={onChange} name='email' required /> {/* value is from state values */}
               </div>
               <div className="input-box">
                 <span className="details">Title</span>
-                <input type="text"  name='title' required />
+                <input type="text" value={values.title} onChange={onChange} name='title' required />
               </div>
               <div className="input-box">
                 <span className="details">Phone Number</span>
-                <input type="text"  name='phone' required />
+                <input type="text" value={values.phone} onChange={onChange} name='phone' required />
               </div>
               <div className="input-box">
                 <span className="details">Address</span>
-                <input type="text"  name='address' required />
+                <input type="text" value={values.address} onChange={onChange} name='address' required />
               </div>
               <div className="input-box">
                 <span className="details">Account Status</span>
-                <input type="text"  name='status' required />
+                <input type="text" value={values.status} onChange={onChange} name='status' required />
               </div>
               <div className="file-input">
                 <span className="details">Profile Photo</span>
