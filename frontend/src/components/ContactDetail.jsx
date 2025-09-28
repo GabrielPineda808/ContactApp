@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getContact} from '../api/ContactService';
+import { getContact } from '../api/ContactService';
+import { toastError, toastSuccess } from '../api/ToastService';
 
-const ContactDetail = ({updateContact, updateImage}) => {
-
+const ContactDetail = ({ updateContact, updateImage }) => {
     const inputRef = useRef();
     const [contact, setContact] = useState({
         id: '',
@@ -14,71 +14,72 @@ const ContactDetail = ({updateContact, updateImage}) => {
         title: '',
         status: '',
         photoUrl: ''
-      });
+    });
 
-    const { id } = useParams(); // get the id from the url
+    const { id } = useParams();
 
     const fetchContact = async (id) => {
         try {
-            const {data} = await getContact(id); // save contact without photo first to get the id and get just data from response
-            setContact(data); // set contact state
+            const { data } = await getContact(id);
+            setContact(data);
             console.log(data);
-        }catch (error) {
-            console.error('Error fetching contact:', error);
+            //toastSuccess('Contact retrieved');
+        } catch (error) {
+            console.log(error);
+            toastError(error.message);
         }
-    }
+    };
 
-    const updatePhoto = async (file) => {
+    const selectImage = () => {
+        inputRef.current.click();
+    };
+
+    const udpatePhoto = async (file) => {
         try {
-            const formData = new FormData(); // create a new FormData object to hold the file data
-            formData.append('file', file, file.name); // append the file to the FormData object with key 'file'
-            formData.append('id', id); // append the contact id to the FormData object with key 'id'
-            await updateImage(formData); // send the FormData object to the server
-            setContact((prev) => ({...prev, photoUrl: `${prev.photoUrl}?updated_at=${new Date().getTime()}`})); // update contact state with new photoUrl
+            const formData = new FormData();
+            formData.append('file', file, file.name);
+            formData.append('id', id);
+            await updateImage(formData);
+            setContact((prev) => ({ ...prev, photoUrl: `${prev.photoUrl}?updated_at=${new Date().getTime()}` }));
+            toastSuccess('Photo updated');
+        } catch (error) {
+            console.log(error);
+            toastError(error.message);
         }
-        catch (error) {
-            console.error('Error updating photo:', error);
-        };
-    }
+    };
 
     const onChange = (event) => {
-        setContact({ ...contact, [event.target.name]: event.target.value }); // spread operator to copy existing values and update the specific field aka set input values as current contact you are editing
+        setContact({ ...contact, [event.target.name]: event.target.value });
     };
 
     const onUpdateContact = async (event) => {
-        event.preventDefault(); // prevent form from submitting and reloading the page
-        await updateContact(contact);// call updateContact function from props   
-        fetchContact(id); // refresh contact details
+        event.preventDefault();
+        await updateContact(contact);        
+        fetchContact(id);
+        toastSuccess('Contact Updated');
     };
 
     useEffect(() => {
-        fetchContact(id); // fetch contact details when component mounts or id changes
+        fetchContact(id);
     }, []);
 
-    
-    const selectImage = () => {
-        inputRef.current.click(); // programmatically click the hidden file input
-    }
-
-    useEffect(() => { fetchContact(id);}, []);
-
     return (
-    <>
-    <Link to={'/contacts'} className="link"><i className='bi bi-arrow-left'></i>Back to Contact Page</Link>
-    <div className='profile'>
-        <div className='profile__details'>
-            <img src={contact.photoUrl} alt={`Profile photo of ${contact.name}`} />
-            <div className='profile__metadata'>
-                <p className='profile__name'>{contact.name}</p>
-                <p className='profile__muted'>JPG, GIF, or PNG. Max size of 10MB</p>
-                <button onClick={selectImage} className='btn'><i className='bi bi-cloud-upload'></i>Change Photo</button>
-            </div>
-        </div>
-        <div className='profile__settings'>
-            <div>
-                 <form onSubmit={onUpdateContact} className="form">
+        <>
+            <Link to={'/contacts'} className='link'><i className='bi bi-arrow-left'></i> Back to list</Link>
+            <div className='profile'>
+                <div className='profile__details'>
+                    <img src={contact.photoUrl} alt={`Profile photo of ${contact.name}`} />
+                    <div className='profile__metadata'>
+                        <p className='profile__name'>{contact.name}</p>
+                        <p className='profile__muted'>JPG, GIF, or PNG. Max size of 10MG</p>
+                        <button onClick={selectImage} className='btn'><i className='bi bi-cloud-upload'></i> Change Photo</button>
+                    </div>
+                </div>
+                <div className='profile__settings'>
+                    <div>
+                        <form onSubmit={onUpdateContact} className="form">
                             <div className="user-details">
-                                <input type="hidden" defaultValue={contact.id} name="id" required /> {/* hidden input to hold contact id */}
+                                <input type="hidden" defaultValue={contact.id} name="id" required />
                                 <div className="input-box">
                                     <span className="details">Name</span>
                                     <input type="text" value={contact.name} onChange={onChange} name="name" required />
@@ -108,15 +109,15 @@ const ContactDetail = ({updateContact, updateImage}) => {
                                 <button type="submit" className="btn">Save</button>
                             </div>
                         </form>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <form style={{display: 'none'}}>
-        <input type='file' ref={inputRef} onChange={(event) => updatePhoto(event.target.files[0])} name='file' accepts='iamge/*'></input>
-    </form>
-    </>
+            <form style={{ display: 'none' }}>
+                <input type='file' ref={inputRef} onChange={(event) => udpatePhoto(event.target.files[0])} name='file' accept='image/*' />
+            </form>
+        </>
     )
 }
 
-export default ContactDetail
+export default ContactDetail;

@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from 'react'
+import 'react-toastify/dist/ReactToastify.css';
 import Header from './components/Header'
 import ContactList from './components/ContactList'
 import { getContacts, saveContact, updatePhoto } from './api/ContactService'
-import './App.css'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import ContactDetail from './components/ContactDetail'
+import { ToastContainer } from 'react-toastify'
 
 function App() {
   const modalRef = useRef(); // reference to the modal element in the DOM aka document.getElementById hold of native html element
@@ -143,6 +144,7 @@ function App() {
           </form>
         </div>
       </dialog>
+      <ToastContainer />
     </>
   )
 }
