@@ -39,7 +39,7 @@ public class ContactController {
         return ResponseEntity.ok().body(contactService.getContact(id));
     }
 
-    @PutMapping("/photo")
+    @PostMapping("/photo")
     public ResponseEntity<String> uploadPhoto(@RequestParam("id")String id, @RequestParam("file")MultipartFile file){
         return ResponseEntity.ok().body(contactService.uploadPhoto(id,file));
     }
