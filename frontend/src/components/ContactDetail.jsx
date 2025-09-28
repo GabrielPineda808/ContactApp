@@ -1,18 +1,19 @@
 import React, {useState, useEffect, useRef} from 'react'
 import { Link, useParams } from 'react-router-dom';
-import { getContact, updatePhoto } from '../api/ContactService';
+import { getContact} from '../api/ContactService';
 
 const ContactDetail = ({updateContact, updateImage}) => {
 
     const inputRef = useRef();
     const [contact, setContact] = useState({
+        id: '',
         name: '',
         email: '',
         phone: '',
         address: '',
         title: '',
         status: '',
-        photoUrl: '',
+        photoUrl: ''
       });
 
     const { id } = useParams(); // get the id from the url
@@ -32,9 +33,8 @@ const ContactDetail = ({updateContact, updateImage}) => {
             const formData = new FormData(); // create a new FormData object to hold the file data
             formData.append('file', file, file.name); // append the file to the FormData object with key 'file'
             formData.append('id', id); // append the contact id to the FormData object with key 'id'
-            const {data } = await updateImage(id);
-            setContact(data);
-            console.log(data);
+            await updateImage(formData); // send the FormData object to the server
+            setContact((prev) => ({...prev, photoUrl: `${prev.photoUrl}?updated_at=${new Date().getTime()}`})); // update contact state with new photoUrl
         }
         catch (error) {
             console.error('Error updating photo:', error);
@@ -42,7 +42,9 @@ const ContactDetail = ({updateContact, updateImage}) => {
     }
 
     
-    const selectImage = () => {}
+    const selectImage = () => {
+        inputRef.current.click(); // programmatically click the hidden file input
+    }
 
     useEffect(() => { fetchContact(id);}, []);
 
