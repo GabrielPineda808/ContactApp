@@ -86,7 +86,7 @@ function App() {
               </div>
               <div className="file-input">
                 <span className="details">Profile Photo</span>
-                <input type="file" name='photo' required />
+                <input type="file" onChange={(e) => setFile(e.target.files[0])} name='photo' required />
               </div>
             </div>
             <div className="form_footer">
