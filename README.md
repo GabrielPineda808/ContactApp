@@ -146,11 +146,6 @@ cd backend && ./mvnw clean package
 cd frontend && npm run build
 ```
 
-### Docker (Optional)
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
-```
 
 ## 🔧 Configuration
 
@@ -232,30 +227,7 @@ npm run test
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-### Development Guidelines
-- Follow Spring Boot conventions for backend
-- Use React hooks and functional components
-- Implement proper error handling
-- Add comprehensive logging
-- Write meaningful commit messages
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Support
-
-For support and questions:
-- Open an issue in the repository
-- Check the individual README files in `backend/` and `frontend/` directories
-- Review the API documentation
-
-## 🙏 Acknowledgments
-
-- Spring Boot team for the excellent framework
-- React team for the powerful UI library
-- PostgreSQL for the robust database
-- All open-source contributors
 
 ---
 
