@@ -4,6 +4,7 @@ import ContactList from './components/ContactList'
 import { getContacts, saveContact, updatePhoto } from './api/ContactService'
 import './App.css'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import ContactDetail from './components/ContactDetail'
 
 function App() {
   const modalRef = useRef(); // reference to the modal element in the DOM aka document.getElementById hold of native html element
@@ -40,7 +41,7 @@ function App() {
     try {
       const {data} = await saveContact(values); // save contact without photo first to get the id and get just data from response
       const formData = new FormData(); // create a new FormData object to hold the file data
-      formData.append('file', file); // append the file to the FormData object with key 'file'
+      formData.append('file', file, file.name); // append the file to the FormData object with key 'file'
       formData.append('id', data.id); // append the contact id to the FormData object with key 'id'
       const {data: photoUrl} = await updatePhoto(formData); // send the FormData object to the server
       toggleModal(false); // close the modal
@@ -61,6 +62,16 @@ function App() {
     }
   }
 
+  const updateContact = async () => {}
+
+  const updateImage = async (formData) => {
+    try {
+      const {data : photoUrl} = await updatePhoto(formData);
+    } catch (error) {
+      console.error('Error updating photo:', error);
+    }
+  }
+
   const toggleModal = (show) => show ? modalRef.current.showModal() : modalRef.current.close(); // toggle modal natively with html of ref 
 
   useEffect(() => { getAllContacts();}, []); // runs once when componenet is reandered if there is no [] then it runs after every render and if there is an object inside the [] it wil run after first render and when that obj changes only
@@ -73,6 +84,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Navigate  to='/contacts'/>}></Route>
             <Route path='/contacts' element={<ContactList data={data} currentPage={currentPage} getAllContacts={getAllContacts} />}/>
+            <Route path='/contacts/:id' element={<ContactDetail updateContact={updateContact} updateImage={updateImage} />}/>
           </Routes>
         </div>
       </main>
