@@ -1,12 +1,13 @@
 import { useEffect, useState, useRef } from 'react'
 import Header from './components/Header'
 import ContactList from './components/ContactList'
-import { getContacts } from './api/ContactService'
+import { getContacts, saveContact, updatePhoto } from './api/ContactService'
 import './App.css'
 import { Routes, Route, Navigate } from 'react-router-dom'
 
 function App() {
   const modalRef = useRef(); // reference to the modal element in the DOM aka document.getElementById hold of native html element
+  const fileRef = useRef();
   const [data, setData] = useState({});
   const [currentPage, setCurrentPage] = useState(0);
   const [file, setFile] = useState(undefined);
@@ -34,6 +35,32 @@ function App() {
     setValues({...values, [e.target.name]: e.target.value}) // spread operator to copy existing values and update the specific field
   } // updates state on input change
 
+  const handleNewContact = async (e) => {
+    e.preventDefault(); // prevent form from submitting and reloading the page
+    try {
+      const {data} = await saveContact(values); // save contact without photo first to get the id and get just data from response
+      const formData = new FormData(); // create a new FormData object to hold the file data
+      formData.append('file', file); // append the file to the FormData object with key 'file'
+      formData.append('id', data.id); // append the contact id to the FormData object with key 'id'
+      const {data: photoUrl} = await updatePhoto(formData); // send the FormData object to the server
+      toggleModal(false); // close the modal
+      setFile(undefined); // reset file state
+      fileRef.current.value = null; // reset file input value
+      setValues({ // reset form values
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        title: '',
+        status: '',
+      });
+      modalRef.current.close(); // close the modal
+      getAllContacts();
+    } catch (error) {
+      console.error('Error creating contact:', error);
+    }
+  }
+
   const toggleModal = (show) => show ? modalRef.current.showModal() : modalRef.current.close(); // toggle modal natively with html of ref 
 
   useEffect(() => { getAllContacts();}, []); // runs once when componenet is reandered if there is no [] then it runs after every render and if there is an object inside the [] it wil run after first render and when that obj changes only
@@ -58,7 +85,7 @@ function App() {
         </div>
         <div className="divider"></div>
         <div className="modal__body">
-          <form>
+          <form onSubmit={handleNewContact} >
             <div className="user-details">
               <div className="input-box">
                 <span className="details">Name</span>
@@ -86,11 +113,11 @@ function App() {
               </div>
               <div className="file-input">
                 <span className="details">Profile Photo</span>
-                <input type="file" onChange={(e) => setFile(e.target.files[0])} name='photo' required />
+                <input type="file" onChange={(e) => setFile(e.target.files[0])} ref={fileRef} name='photo' required />
               </div>
             </div>
             <div className="form_footer">
-              <button type='button' className="btn btn-danger">Cancel</button>
+              <button type='button' onClick={() => toggleModal(false)} className="btn btn-danger">Cancel</button>
               <button type='submit' className="btn">Save</button>
             </div>
           </form>
